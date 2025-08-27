@@ -33,7 +33,7 @@ Permite registrar tareas de **alimentación, ejercicio y bienestar**, guardarlas
 ## 🛠️ Tecnologías
 - HTML5  
 - CSS3  
-- JavaScript (Vanilla)  
+- JavaScript 
 
 ---
 
@@ -46,4 +46,4 @@ Permite registrar tareas de **alimentación, ejercicio y bienestar**, guardarlas
 
 ## 👩‍💻 Autor
 Desarrollado por Laura Cabot 
-Estudiante en formacion Diplomatura Frond end 
+Estudiante en formacion Diplomatura Frondend 

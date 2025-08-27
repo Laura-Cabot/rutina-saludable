@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de Rutina Saludable</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Historial de actividades</h1>
+  <table id="tablaHistorial">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Alimentación</th>
+        <th>Ejercicio</th>
+        <th>Bienestar</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <a href="index.html" class="volver">⬅️ Volver a la rutina</a>
+
+  <script>
+    const history = JSON.parse(localStorage.getItem("healthHistory") || "[]");
+    const tbody = document.querySelector("#tablaHistorial tbody");
+
+    if (history.length === 0) {
+      tbody.innerHTML = "<tr><td colspan='4'>Aún no hay registros</td></tr>";
+    } else {
+      history.forEach(day => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td data-label="Fecha">${day.date}</td>
+          <td data-label="Alimentación">${day.data.alimentacion.completadas.join(", ") || "-"}</td>
+          <td data-label="Ejercicio">${day.data.ejercicio.completadas.join(", ") || "-"}</td>
+          <td data-label="Bienestar">${day.data.bienestar.completadas.join(", ") || "-"}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>

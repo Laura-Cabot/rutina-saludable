@@ -86,43 +86,38 @@ const showMessage = (message) => {
 
 // Carga los datos de localStorage al iniciar la página
 const loadTasks = () => {
-  const storedData = localStorage.getItem("healthRoutine"); // Si hay datos guardados, los carga. Si no, inicializa con las tareas sugeridas.
+  const storedData = localStorage.getItem("healthRoutine");
   if (storedData) {
     appData = JSON.parse(storedData);
   } else {
-    startNewDay(false); // Inicia el día sin guardar historial
+    startNewDay(false);
     return;
-  } // Verifica si la última fecha de guardado es diferente a la de hoy
+  }
   const today = new Date().toLocaleDateString("es-ES");
   if (localStorage.getItem("lastSavedDate") !== today) {
-    startNewDay(true); // Si es un día nuevo, guarda el anterior y reinicia
+    startNewDay(true);
   }
 
   renderTasks();
 };
 
-// --- NUEVA FUNCIÓN: INICIAR UN DÍA NUEVO ---
+// Iniciar un día nuevo
 const startNewDay = (archivePrevious) => {
   if (archivePrevious) {
-    // 1. Guarda el registro del día anterior
     const history = JSON.parse(localStorage.getItem("healthHistory") || "[]");
-    const today = new Date().toLocaleDateString("es-ES");
     history.push({
       date: localStorage.getItem("lastSavedDate"),
       data: appData,
     });
     localStorage.setItem("healthHistory", JSON.stringify(history));
     showMessage(`💾 ¡Registro del día anterior guardado!`);
-  } // 2. Limpia y reinicializa la rutina del día actual
-
+  }
   appData = {
     alimentacion: { pendientes: suggestedTasks.alimentacion, completadas: [] },
     ejercicio: { pendientes: suggestedTasks.ejercicio, completadas: [] },
     bienestar: { pendientes: suggestedTasks.bienestar, completadas: [] },
-  }; // 3. Guarda la fecha de hoy
-
+  };
   localStorage.setItem("lastSavedDate", new Date().toLocaleDateString("es-ES"));
-
   updateLocalStorage();
   renderTasks();
 };
@@ -135,13 +130,13 @@ const renderTasks = () => {
   sections.ejercicio.pendingList.innerHTML = "";
   sections.ejercicio.completedList.innerHTML = "";
   sections.bienestar.pendingList.innerHTML = "";
-  sections.bienestar.completedList.innerHTML = ""; // Renderizar tareas pendientes
+  sections.bienestar.completedList.innerHTML = "";
 
   for (const category in appData) {
     appData[category].pendientes.forEach((taskText) => {
       const card = createTaskCard(category, taskText, false);
       sections[category].pendingList.appendChild(card);
-    }); // Renderizar tareas completadas
+    });
     appData[category].completadas.forEach((taskText) => {
       const card = createTaskCard(category, taskText, true);
       sections[category].completedList.appendChild(card);
@@ -161,7 +156,6 @@ const createTaskCard = (category, taskText, isCompleted) => {
   deleteButton.classList.add("delete-btn");
   deleteButton.textContent = "❌";
 
-  // CORRECCIÓN: Agregar listeners para clic y toque
   deleteButton.addEventListener("click", (e) => {
     e.stopPropagation();
     deleteTask(category, taskText, isCompleted);
@@ -174,7 +168,6 @@ const createTaskCard = (category, taskText, isCompleted) => {
   card.appendChild(deleteButton);
 
   if (!isCompleted) {
-    // CORRECCIÓN: Agregar listeners para clic y toque
     card.addEventListener("click", () => {
       toggleTaskCompletion(category, taskText);
     });
@@ -227,12 +220,11 @@ const deleteTask = (category, taskText, isCompleted) => {
   showMessage(`🗑️ Tarea "${taskText}" eliminada.`);
 };
 // Agrega una referencia al nuevo botón y contenedor
-const showHistoryBtn = document.getElementById("showHistoryBtn");
 const historyContainer = document.getElementById("historyContainer");
 
 // Función para mostrar el historial
 const showHistory = () => {
-  const history = JSON.parse(localStorage.getItem("healthHistory") || "[]"); // Limpia el contenedor antes de mostrar el historial
+  const history = JSON.parse(localStorage.getItem("healthHistory") || "[]");
   historyContainer.innerHTML = "";
   if (history.length === 0) {
     historyContainer.innerHTML =
@@ -244,32 +236,30 @@ const showHistory = () => {
     const dayRecord = document.createElement("div");
     dayRecord.classList.add("day-record");
     dayRecord.innerHTML = `
-            <h3>Registro del ${day.date}</h3>
-            <div class="record-content">
-                <p><strong>Alimentación:</strong> ${
-      day.data.alimentacion.completadas.join(", ") || "Nada completado"
-    }</p>
-                <p><strong>Ejercicio:</strong> ${
-      day.data.ejercicio.completadas.join(", ") || "Nada completado"
-    }</p>
-                <p><strong>Bienestar:</strong> ${
-      day.data.bienestar.completadas.join(", ") || "Nada completado"
-    }</p>
-            </div>
-        `;
+        <h3>Registro del ${day.date}</h3>
+        <div class="record-content">
+            <p><strong><br>Alimentación:</strong> ${
+              day.data.alimentacion.completadas.join(", ") || "Nada completado"
+            }</p>
+            <p><strong><br>Ejercicio:</strong> ${
+              day.data.ejercicio.completadas.join(", ") || "Nada completado"
+            }</p>
+            <p><strong><br>Bienestar:</strong> ${
+              day.data.bienestar.completadas.join(", ") || "Nada completado"
+            }</p>
+        </div>
+    `;
     historyContainer.appendChild(dayRecord);
   });
 };
 
-// Conecta el botón a la función
-showHistoryBtn.addEventListener("click", showHistory);
 const saveDay = () => {
-  const today = new Date().toLocaleDateString("es-ES"); // Verifica si la fecha de hoy ya ha sido guardada
+  const today = new Date().toLocaleDateString("es-ES");
   if (localStorage.getItem("lastSavedDate") === today) {
     showMessage("Ya has guardado tu registro de hoy. ¡Vuelve mañana! 😊");
-    return; // Detiene la función para no guardar un registro duplicado
+    return;
   }
-  startNewDay(true); // Si no se ha guardado, procede a guardar el día
+  startNewDay(true);
   showMessage("💾 ¡Día guardado! Tus logros están seguros.");
 };
 
@@ -282,31 +272,38 @@ document.addEventListener("DOMContentLoaded", () => {
     month: "long",
     day: "numeric",
   };
-  document.getElementById(
-    "fechaActual"
-  ).textContent = `Hoy es: ${today.toLocaleDateString("es-ES", options)}`;
+  const fechaActual = document.getElementById("fechaActual");
+  if(fechaActual) {
+    fechaActual.textContent = `Hoy es: ${today.toLocaleDateString("es-ES", options)}`;
+  }
 
   loadTasks();
-  loadRandomVideos(); // Carga videos aleatorios al iniciar
+  loadRandomVideos();
 });
 
-document.querySelector(".cierre-dia button").addEventListener("click", saveDay);
+const saveDayBtn = document.querySelector(".cierre-dia button");
+if (saveDayBtn) {
+    saveDayBtn.addEventListener("click", saveDay);
+}
+
+const showHistoryBtn = document.getElementById("showHistoryBtn");
+if (showHistoryBtn) {
+    showHistoryBtn.addEventListener("click", showHistory);
+}
+
 // Función para borrar todos los registros
 const resetApp = () => {
-  // Confirma con el usuario si realmente quiere borrar todo
   if (
     !confirm(
       "¿Estás segura de que quieres borrar todos tus registros? Esta acción no se puede deshacer."
     )
   ) {
-    return; // Detiene la función si el usuario cancela
-  } // Borra los datos del historial y la rutina del día actual
-
+    return;
+  }
   localStorage.removeItem("healthRoutine");
   localStorage.removeItem("healthHistory");
-  localStorage.removeItem("lastSavedDate"); // Reinicia la aplicación para empezar de cero
-
-  startNewDay(false); // No archiva nada, solo reinicia
+  localStorage.removeItem("lastSavedDate");
+  startNewDay(false);
   showMessage(
     "🗑️ Todos los registros han sido borrados. ¡Puedes empezar de nuevo!"
   );
@@ -325,15 +322,23 @@ const relajacionUrls = [
   "https://www.youtube.com/embed/lh4JdZTJe7k",
 ];
 
-// --- NUEVA FUNCIÓN: Cargar videos aleatorios ---
+// Cargar videos aleatorios
 const loadRandomVideos = () => {
-  // Obtiene una URL aleatoria del array de meditación
   const randomMeditacionUrl =
-    meditacionUrls[Math.floor(Math.random() * meditacionUrls.length)]; // Obtiene una URL aleatoria del array de relajación
+    meditacionUrls[Math.floor(Math.random() * meditacionUrls.length)];
   const randomRelajacionUrl =
-    relajacionUrls[Math.floor(Math.random() * relajacionUrls.length)]; // Asigna las URLs a los iframes
-  document.getElementById("meditacionVideo").src = randomMeditacionUrl;
-  document.getElementById("relajacionVideo").src = randomRelajacionUrl;
+    relajacionUrls[Math.floor(Math.random() * relajacionUrls.length)];
+  const meditacionVideo = document.getElementById("meditacionVideo");
+  const relajacionVideo = document.getElementById("relajacionVideo");
+  if (meditacionVideo) {
+    meditacionVideo.src = randomMeditacionUrl;
+  }
+  if (relajacionVideo) {
+    relajacionVideo.src = randomRelajacionUrl;
+  }
 };
 // Conectar el botón de reset a la función
-document.getElementById("resetButton").addEventListener("click", resetApp);
+const resetButton = document.getElementById("resetButton");
+if (resetButton) {
+    resetButton.addEventListener("click", resetApp);
+}
