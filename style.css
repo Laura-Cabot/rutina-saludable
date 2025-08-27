@@ -499,4 +499,28 @@ button:hover {
   background-color: #6a7d5c;
  
 }
+body {
+  font-size: 1rem; /* equivale a 16px por defecto */
+}
+p {
+  font-size: 1.1rem; /* ~17.6px */
+}
+@media (max-width: 600px) {
+  body {
+    font-size: 18px; /* un poquito más grande en celular */
+  }
+  h1 {
+    font-size: 2rem; /* títulos más legibles */
+  }
+  p, input, button {
+    font-size: 1rem; /* más aire para leer y tocar */
+  }
+}
+body {
+  line-height: 1.8;
+}
+html {
+  background-color: #ffffff;
+  color-scheme: light;
+}
 
